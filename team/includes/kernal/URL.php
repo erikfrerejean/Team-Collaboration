@@ -22,36 +22,64 @@ class URL
 	*
 	* @var string
 	*/
-	private static $separator = '-';
-	private static $separator_replacement = '%96';
+	const SEPARATOR = '-';
+	const SEPARATOR_REPLACEMENT = '%96';
 
 	/**
 	* Root URL, the Root URL to the base
-	*
+	*const SEPARATOR
 	* @var string
 	*/
-	public static $root_url;
+	public $root_url;
 
 	/**
 	* Parameters pulled from the current URL the user is accessing
 	*
 	* @var array
 	*/
-	public static $params = array();
+	public $params = array();
 
 	/**
 	* Current page we are on (minus all the parameters)
 	*
 	* @var string
 	*/
-	public static $current_page;
+	public $current_page;
 
 	/**
-	* Current page we are on (built with self::$current_page and self::$params)
+	* Current page we are on (built with $this->current_page and $this->params)
 	*
 	* @var string
 	*/
-	public static $current_page_url;
+	public $current_page_url;
+
+	/**
+	 * Main constructor
+	 * Decode the url request we are currently on and put the data in $_REQUEST/$_GET
+	 *
+	 * This function should be called before phpBB is initialized
+	 */
+	public function __construct()
+	{
+		$url = (!empty($_SERVER['REQUEST_URI'])) ? $_SERVER['REQUEST_URI'] : getenv('REQUEST_URI');
+
+		// Grab the arguments
+		$args = substr($url, (strrpos($url, '/') + 1));
+
+		// Split up the arguments
+		foreach ($this->split_params($args) as $name => $value)
+		{
+			$name = urldecode($name);
+
+			$this->params[$name] = (!is_array($value)) ? urldecode(str_replace(self::SEPARATOR_REPLACEMENT, self::SEPARATOR, $value)) : $value;
+		}
+		// Style cannot ever be allowed as a URL parameter because it is used by phpBB to request a custom board style
+		unset($this->params['style']);
+
+		// Merge the parameters into the get/request superglobals.  Merge them to prevent a parameter in the parameters part of the URL from over-writting one that is already in here
+		$_GET = array_merge($this->params, $_GET);
+		$_REQUEST = array_merge($this->params, $_REQUEST);
+	}
 
 	/**
 	* Build URL by appending the needed parameters to a base URL
@@ -60,12 +88,12 @@ class URL
 	* @param array $params Array of parameters we need to clean and append to the base url
 	* @return string
 	*/
-	public static function build_url($base, $params = array())
+	public function build_url($base, $params = array())
 	{
 		// Parameters must be an array to modify them
 		if (!is_array($params))
 		{
-			$params = self::split_params($params);
+			$params = $this->split_params($params);
 		}
 
 		// Handle the session id
@@ -81,9 +109,9 @@ class URL
 		}
 
 		// Prevent rebuilding...
-		if (self::is_built($base))
+		if ($this->is_built($base))
 		{
-			return self::append_url($base, $params);
+			return $this->append_url($base, $params);
 		}
 
 		// URL Encode the base
@@ -92,7 +120,7 @@ class URL
 		$base = implode('/', $base);
 
 		// Start building the final URL
-		$final_url = self::$root_url . $base;
+		$final_url = $this->root_url . $base;
 
 		// Add a slash to the end if we do not have one
 		if (substr($final_url, -1) != '/')
@@ -101,7 +129,7 @@ class URL
 		}
 
 		// Use the append_url function to add the parameters and return
-		return self::append_url($final_url, $params);
+		return $this->append_url($final_url, $params);
 	}
 
 	/**
@@ -110,9 +138,9 @@ class URL
 	 * @param <string> $base The URL you want to check
 	 * @return <bool> True if it was already built, false if it was not
 	 */
-	public static function is_built($base)
+	public function is_built($base)
 	{
-		if (strpos($base, self::$root_url) !== false)
+		if (strpos($base, $this->root_url) !== false)
 		{
 			return true;
 		}
@@ -129,11 +157,11 @@ class URL
 	* @param array $params Array of parameters we need to clean and append to the base url
 	* @return string
 	*/
-	public static function append_url($url, $params = array())
+	public function append_url($url, $params = array())
 	{
 		if (!is_array($params))
 		{
-			$params = self::split_params($params);
+			$params = $this->split_params($params);
 		}
 
 		// Extract the anchor from the end of the base if there is one
@@ -155,7 +183,7 @@ class URL
 			// Special case when we just want to add one thing to the URL (ex, the topic title)
 			if (is_int($name))
 			{
-				$url .= ((substr($url, -1) != '/') ? self::$separator : '') . self::url_replace($value);
+				$url .= ((substr($url, -1) != '/') ? self::SEPARATOR : '') . $this->url_replace($value);
 				continue;
 			}
 
@@ -166,13 +194,13 @@ class URL
 			}
 
 			// Does this field already exist in the url?  If so replace it
-			if (strpos(substr($url, strrpos($url, '/')), self::$separator . $name . '_') !== false)
+			if (strpos(substr($url, strrpos($url, '/')), self::SEPARATOR . $name . '_') !== false)
 			{
-				$url = substr($url, 0, strrpos($url, '/')) . preg_replace('#' . self::$separator . $name . '_[^' . self::$separator . ']+#', '', substr($url, strrpos($url, '/')));
+				$url = substr($url, 0, strrpos($url, '/')) . preg_replace('#' . self::SEPARATOR . $name . '_[^' . self::SEPARATOR . ']+#', '', substr($url, strrpos($url, '/')));
 			}
 			else if (strpos(substr($url, strrpos($url, '/')), '/' . $name . '_') !== false)
 			{
-				$url = substr($url, 0, strrpos($url, '/')) . preg_replace('#/' . $name . '_[^' . self::$separator . ']+#', '/', substr($url, strrpos($url, '/')));
+				$url = substr($url, 0, strrpos($url, '/')) . preg_replace('#/' . $name . '_[^' . self::SEPARATOR . ']+#', '/', substr($url, strrpos($url, '/')));
 			}
 
 			// Specify the value as *destroy* to make sure the value isn't kept in the URL (old values are unset and new is not appended)
@@ -184,20 +212,20 @@ class URL
 					{
 						if (substr($url, -1) != '/')
 						{
-							$url .= self::$separator;
+							$url .= self::SEPARATOR;
 						}
 
-						$url .= self::url_replace($name) . '[]_' . self::url_replace($val);
+						$url .= $this->url_replace($name) . '[]_' . $this->url_replace($val);
 					}
 				}
 				else
 				{
 					if (substr($url, -1) != '/')
 					{
-						$url .= self::$separator;
+						$url .= self::SEPARATOR;
 					}
 
-					$url .= self::url_replace($name) . '_' . self::url_replace($value);
+					$url .= $this->url_replace($name) . '_' . $this->url_replace($value);
 				}
 			}
 		}
@@ -211,12 +239,12 @@ class URL
 	/**
 	* Build a "clean" url (gets the built URL and then removes the SID)
 	*/
-	public static function build_clean_url($base, $params = array())
+	public function build_clean_url($base, $params = array())
 	{
-		$url = self::build_url($base, $params);
+		$url = $this->build_url($base, $params);
 
 		// Replace SID
-		$url = self::remove_sid($url);
+		$url = $this->remove_sid($url);
 
 		return $url;
 	}
@@ -226,13 +254,13 @@ class URL
 	*
 	* @param mixed $url
 	*/
-	public static function unbuild_url($url)
+	public function unbuild_url($url)
 	{
 		// Remove the root url
-		$url = str_replace(self::$root_url, '', $url);
+		$url = str_replace($this->root_url, '', $url);
 
 		// Replace SID
-		$url = self::remove_sid($url);
+		$url = $this->remove_sid($url);
 
 		// Decode the URL (it'll be recoded again later)
 		$url = urldecode($url);
@@ -246,7 +274,7 @@ class URL
 	* @param mixed $url
 	* @return mixed
 	*/
-	public static function remove_sid($url)
+	public function remove_sid($url)
 	{
 		return preg_replace('#sid_[a-z0-9]+#', '', $url);
 	}
@@ -258,7 +286,7 @@ class URL
 	* @param string $params The params
 	* @param string|bool $url The url to unbuild from storage (can send it through $base optionally and leave as false)
 	*/
-	public static function split_base_params(&$base, &$params, $url = false)
+	public function split_base_params(&$base, &$params, $url = false)
 	{
 		$base = ($url !== false) ? $url : $base;
 		$params = array();
@@ -267,7 +295,7 @@ class URL
 		{
 			$params = substr($base, (strrpos($base, '/') + 1));
 			$base = substr($base, 0, (strrpos($base, '/') + 1));
-			$params = self::split_params($params);
+			$params = $this->split_params($params);
 		}
 	}
 
@@ -276,7 +304,7 @@ class URL
 	*
 	* @param string $params
 	*/
-	public static function split_params($params)
+	public function split_params($params)
 	{
 		$new_params = array();
 
@@ -286,7 +314,7 @@ class URL
 			$params = substr($params, 0, strpos($params, '#'));
 		}
 
-		foreach (explode(self::$separator, $params) as $section)
+		foreach (explode(self::SEPARATOR, $params) as $section)
 		{
 			$parts = explode('_', $section, 2);
 			if (sizeof($parts) == 2)
@@ -300,7 +328,7 @@ class URL
 						$new_params[$parts[0]] = array();
 					}
 
-					$new_params[$parts[0]][] = urldecode(str_replace(self::$separator_replacement, self::$separator, $parts[1]));
+					$new_params[$parts[0]][] = urldecode(str_replace(self::SEPARATOR_REPLACEMENT, self::SEPARATOR, $parts[1]));
 				}
 				else
 				{
@@ -322,9 +350,9 @@ class URL
 	* @param string $string
 	* @return string
 	*/
-	public static function url_slug($string)
+	public function url_slug($string)
 	{
-		$string = self::url_replace($string, false);
+		$string = $this->url_replace($string, false);
 
 		// Replace any number of spaces with a single underscore
 		$string = preg_replace('#[\s]+#', '_', $string);
@@ -345,7 +373,7 @@ class URL
 	* @param bool $urlencode
 	* @return string
 	*/
-	public static function url_replace($url, $urlencode = true)
+	public function url_replace($url, $urlencode = true)
 	{
 
 		$match = array('&amp;', '&lt;', '&gt;', '&quot;');
@@ -354,7 +382,7 @@ class URL
 		$url = trim($url);
 
 		// Our separator replacement is probably a url encoded value, so make sure that it doesn't get re-encoded twice (%25 would replace the % every time it is run)
-		$url = str_replace(self::$separator_replacement, self::$separator, $url);
+		$url = str_replace(self::SEPARATOR_REPLACEMENT, self::SEPARATOR, $url);
 
 		if ($urlencode)
 		{
@@ -363,55 +391,28 @@ class URL
 		else
 		{
 			// We need to replace some stuff
-			$match = array('+', '#', '?', '/', '\\', '\'', '%', '&', self::$separator);
+			$match = array('+', '#', '?', '/', '\\', '\'', '%', '&', self::SEPARATOR);
 			$url = str_replace($match, ' ', $url);
 		}
 
-		$url = str_replace(array('%5B', '%5D', self::$separator), array('[', ']', self::$separator_replacement), $url);
+		$url = str_replace(array('%5B', '%5D', self::SEPARATOR), array('[', ']', self::SEPARATOR_REPLACEMENT), $url);
 
 		return $url;
 	}
 
 	/**
-	* Decode the url request we are currently on and put the data in $_REQUEST/$_GET
-	*
-	* This function should be called before phpBB is initialized
-	*/
-	public static function decode_request()
-	{
-		$url = (!empty($_SERVER['REQUEST_URI'])) ? $_SERVER['REQUEST_URI'] : getenv('REQUEST_URI');
-
-		// Grab the arguments
-		$args = substr($url, (strrpos($url, '/') + 1));
-
-		// Split up the arguments
-		foreach (self::split_params($args) as $name => $value)
-		{
-			$name = urldecode($name);
-
-			self::$params[$name] = (!is_array($value)) ? urldecode(str_replace(self::$separator_replacement, self::$separator, $value)) : $value;
-		}
-		// Style cannot ever be allowed as a URL parameter because it is used by phpBB to request a custom board style
-		unset(self::$params['style']);
-
-		// Merge the parameters into the get/request superglobals.  Merge them to prevent a parameter in the parameters part of the URL from over-writting one that is already in here
-		$_GET = array_merge(self::$params, $_GET);
-		$_REQUEST = array_merge(self::$params, $_REQUEST);
-	}
-
-	/**
 	* Decode the url to build the current page/current page url
 	*/
-	public static function decode_url($script_path)
+	public function decode_url($script_path)
 	{
 		$url = (!empty($_SERVER['REQUEST_URI'])) ? $_SERVER['REQUEST_URI'] : getenv('REQUEST_URI');
 
 		// Store the current page
-		self::$current_page = substr($url, 0, (strrpos($url, '/') + 1));
-		self::$current_page = (self::$current_page[0] == '/') ? substr(self::$current_page, 1) : self::$current_page;
-		self::$current_page = str_replace($script_path, '', self::$root_url) . self::$current_page;
+		$this->current_page = substr($url, 0, (strrpos($url, '/') + 1));
+		$this->current_page = ($this->current_page[0] == '/') ? substr($this->current_page, 1) : $this->current_page;
+		$this->current_page = str_replace($script_path, '', $this->root_url) . $this->current_page;
 
 		// Build the full current page url
-		self::$current_page_url = self::build_url(self::$current_page, self::$params);
+		$this->current_page_url = $this->build_url($this->current_page, $this->params);
 	}
 }
