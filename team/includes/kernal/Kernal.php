@@ -22,8 +22,20 @@ class Kernal
 	 */
 	public $phpbb = null;
 
-	public function __construct(phpBB $phpbb)
+	/**
+	 * The URL handler
+	 * @var URL $url
+	 */
+	public $url = null;
+
+	public function __construct(phpBB $phpbb, URL $url)
 	{
-		$this->phpbb = $phpbb;
+		$this->phpbb	= $phpbb;
+		$this->url		= $url;
+
+		// Setup the URL handler
+		// @todo hardcoded for the time being
+		$this->url->root_url = generate_board_url(true) . '/teamcollaboration/team/';
+		$this->url->decode_url('teamcollaboration/team/');
 	}
 }

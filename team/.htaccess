@@ -1,0 +1,10 @@
+RewriteEngine on
+
+##
+# URL's should end in ([^/]+)?
+# The last section is used for additional information in the URL (sid, style, action, etc)
+# It is handled internally, so you do not need to pass it to anything.
+##
+
+RewriteCond %{REQUEST_FILENAME} !-f
+Rewriterule ^([^/]+)?$											./index.php [NC]
