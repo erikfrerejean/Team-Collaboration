@@ -18,5 +18,11 @@ namespace teamcollaboration;
  * The configurtaion array
  */
 $config = array(
-	
+	/**
+	 * Set the Team Collaboration script path, this is the path from
+	 * the web root to the Team Collaboration directory, if you for
+	 * example installed TC at: `http://www.example.com/team/` than your
+	 * script path is: `team`
+	 */
+	'script_path'	=> 'team',
 );

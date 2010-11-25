@@ -10,12 +10,19 @@
 /**
  */
 namespace teamcollaboration\kernal;
+use teamcollaboration;
 
 /**
  * The Team Collaboration kernal
  */
 class Kernal
 {
+	/**
+	 * The Team Collaboration config array
+	 * @var Array $config
+	 */
+	public $config = array();
+
 	/**
 	 * phpBB wrapper object
 	 * @var phpBB $phpbb
@@ -28,14 +35,26 @@ class Kernal
 	 */
 	public $url = null;
 
-	public function __construct(phpBB $phpbb, URL $url)
+	public function __construct(URL $url)
 	{
-		$this->phpbb	= $phpbb;
 		$this->url		= $url;
+
+		// Read the configuration file
+		if (!file_exists(__DIR__ . '/../../team_config.php'))
+		{
+			trigger_error('Couldn\'t read the Team Collaboration configuration file. Make sure that you\'ve correctly installed Team Collaboration!');
+		}
+		include(__DIR__ . '/../../team_config.php');
+		$this->config = $config;
 
 		// Setup the URL handler
 		// @todo hardcoded for the time being
-		$this->url->root_url = generate_board_url(true) . '/teamcollaboration/team/';
-		$this->url->decode_url('teamcollaboration/team/');
+		$this->url->root_url = generate_board_url(true) . "/{$this->config['script_path']}/";
+		$this->url->decode_url("{$this->config['script_path']}/");
+	}
+
+	public function set_phpbb(phpBB $phpbb)
+	{
+		$this->phpbb = $phpbb;
 	}
 }
