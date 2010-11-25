@@ -26,32 +26,32 @@ class URL
 	const SEPARATOR_REPLACEMENT = '%96';
 
 	/**
-	* Root URL, the Root URL to the base
-	*const SEPARATOR
-	* @var string
-	*/
-	public $root_url;
+	 * Root URL, the Root URL to the base
+	 *
+	 * @var string
+	 */
+	public $root_url = '';
 
 	/**
-	* Parameters pulled from the current URL the user is accessing
-	*
-	* @var array
-	*/
+	 * Parameters pulled from the current URL the user is accessing
+	 *
+	 * @var array
+	 */
 	public $params = array();
 
 	/**
-	* Current page we are on (minus all the parameters)
-	*
-	* @var string
-	*/
-	public $current_page;
+	 * Current page we are on (minus all the parameters)
+	 *
+	 * @var string
+	 */
+	public $current_page = '';
 
 	/**
-	* Current page we are on (built with $this->current_page and $this->params)
-	*
-	* @var string
-	*/
-	public $current_page_url;
+	 * Current page we are on (built with $this->current_page and $this->params)
+	 *
+	 * @var string
+	 */
+	public $current_page_url = '';
 
 	/**
 	 * Main constructor
@@ -82,12 +82,12 @@ class URL
 	}
 
 	/**
-	* Build URL by appending the needed parameters to a base URL
-	*
-	* @param string $base The base URL, Ex: customisation/mod/
-	* @param array $params Array of parameters we need to clean and append to the base url
-	* @return string
-	*/
+	 * Build URL by appending the needed parameters to a base URL
+	 *
+	 * @param string $base The base URL, Ex: customisation/mod/
+	 * @param array $params Array of parameters we need to clean and append to the base url
+	 * @return string
+	 */
 	public function build_url($base, $params = array())
 	{
 		// Parameters must be an array to modify them
@@ -149,14 +149,14 @@ class URL
 	}
 
 	/**
-	* Append parameters to a base URL
-	*
-	* Different from build_url in this does not prepare the base, nor worry about session_id.  Only use this if you've already used build_url
-	*
-	* @param string $url The URL we currently have
-	* @param array $params Array of parameters we need to clean and append to the base url
-	* @return string
-	*/
+	 * Append parameters to a base URL
+	 *
+	 * Different from build_url in this does not prepare the base, nor worry about session_id.  Only use this if you've already used build_url
+	 *
+	 * @param string $url The URL we currently have
+	 * @param array $params Array of parameters we need to clean and append to the base url
+	 * @return string
+	 */
 	public function append_url($url, $params = array())
 	{
 		if (!is_array($params))
@@ -237,8 +237,8 @@ class URL
 	}
 
 	/**
-	* Build a "clean" url (gets the built URL and then removes the SID)
-	*/
+	 * Build a "clean" url (gets the built URL and then removes the SID)
+	 */
 	public function build_clean_url($base, $params = array())
 	{
 		$url = $this->build_url($base, $params);
@@ -250,10 +250,10 @@ class URL
 	}
 
 	/**
-	* Unbuild a url (used for the indexer)
-	*
-	* @param mixed $url
-	*/
+	 * Unbuild a url (used for the indexer)
+	 *
+	 * @param mixed $url
+	 */
 	public function unbuild_url($url)
 	{
 		// Remove the root url
@@ -269,23 +269,23 @@ class URL
 	}
 
 	/**
-	* Remove the SID from the url
-	*
-	* @param mixed $url
-	* @return mixed
-	*/
+	 * Remove the SID from the url
+	 *
+	 * @param mixed $url
+	 * @return mixed
+	 */
 	public function remove_sid($url)
 	{
 		return preg_replace('#sid_[a-z0-9]+#', '', $url);
 	}
 
 	/**
-	* Unbuild a url (used from the indexer)
-	*
-	* @param string $base The base (send $url param here and we'll just update it properly)
-	* @param string $params The params
-	* @param string|bool $url The url to unbuild from storage (can send it through $base optionally and leave as false)
-	*/
+	 * Unbuild a url (used from the indexer)
+	 *
+	 * @param string $base The base (send $url param here and we'll just update it properly)
+	 * @param string $params The params
+	 * @param string|bool $url The url to unbuild from storage (can send it through $base optionally and leave as false)
+	 */
 	public function split_base_params(&$base, &$params, $url = false)
 	{
 		$base = ($url !== false) ? $url : $base;
@@ -300,10 +300,10 @@ class URL
 	}
 
 	/**
-	* Split up the parameters (from a string to an array, used for the search page from the indexer)
-	*
-	* @param string $params
-	*/
+	 * Split up the parameters (from a string to an array, used for the search page from the indexer)
+	 *
+	 * @param string $params
+	 */
 	public function split_params($params)
 	{
 		$new_params = array();
@@ -345,11 +345,11 @@ class URL
 	}
 
 	/**
-	* Create a safe string for the URLs
-	*
-	* @param string $string
-	* @return string
-	*/
+	 * Create a safe string for the URLs
+	 *
+	 * @param string $string
+	 * @return string
+	 */
 	public function url_slug($string)
 	{
 		$string = $this->url_replace($string, false);
@@ -365,14 +365,14 @@ class URL
 	}
 
 	/**
-	* URL Replace
-	*
-	* Replaces tags and other items that could break the URLs
-	*
-	* @param string $url
-	* @param bool $urlencode
-	* @return string
-	*/
+	 * URL Replace
+	 *
+	 * Replaces tags and other items that could break the URLs
+	 *
+	 * @param string $url
+	 * @param bool $urlencode
+	 * @return string
+	 */
 	public function url_replace($url, $urlencode = true)
 	{
 
@@ -401,8 +401,8 @@ class URL
 	}
 
 	/**
-	* Decode the url to build the current page/current page url
-	*/
+	 * Decode the url to build the current page/current page url
+	 */
 	public function decode_url($script_path)
 	{
 		$url = (!empty($_SERVER['REQUEST_URI'])) ? $_SERVER['REQUEST_URI'] : getenv('REQUEST_URI');
