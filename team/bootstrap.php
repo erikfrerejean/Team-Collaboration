@@ -11,12 +11,6 @@
  */
 namespace teamcollaboration;
 
-/**
- * @debug
- * A way to setup the MOD to my *local* environment
- */
-define('PHPBB_ROOT_PATH', './../../../Sites/phpbb/moDevCenter/phpBB/');
-
 /*
  * The auto loader
  */

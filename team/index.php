@@ -11,4 +11,10 @@
  */
 namespace teamcollaboration;
 
+/**
+ * @debug
+ * A way to setup the MOD to my *local* environment
+ */
+define('PHPBB_ROOT_PATH', './../../moDevCenter/phpBB/');
+
 require __DIR__ . '/bootstrap.php';
