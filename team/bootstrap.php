@@ -17,12 +17,13 @@ namespace teamcollaboration;
  */
 define('PHPBB_ROOT_PATH', './../../../Sites/phpbb/moDevCenter/phpBB/');
 
-/*
- * The auto loader
- */
+// The auto loader
 require __DIR__ . '/includes/ClassLoader.php';
 $loader = new ClassLoader(__DIR__ . '/includes/', null, 'tc_');
 $loader->register();
+
+// Init URL handler
+kernal\URL::decode_request();
 
 // A wrapper for phpBB
 $phpbb_root_path = $phpEx = '';

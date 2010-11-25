@@ -25,5 +25,10 @@ class Kernal
 	public function __construct(phpBB $phpbb)
 	{
 		$this->phpbb = $phpbb;
+
+		// Setup the URL handler
+		// @todo hardcoded for the time being
+		URL::$root_url = generate_board_url(true) . '/teamcollaboration/team/';
+		URL::decode_url('teamcollaboration/team/');
 	}
 }
