@@ -29,7 +29,6 @@ namespace teamcollaboration;
  */
 class ClassLoader
 {
-	private $cached_paths = array();
 	private $root_path = '';
 
 	/**

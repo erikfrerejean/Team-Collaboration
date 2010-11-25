@@ -27,21 +27,26 @@ class phpBB
 	public $user		= null;
 	/**@#-*/
 
+	/**@#+
+	 * phpBB paths
+	 */
+	public $phpbb_root_path	= '';
+	public $phpEx			= '';
+	/**@#-*/
+
 	/**
 	 * Construct the wrapper
 	 * @param string $phpbb_root_path Variable will be filled with the phpBB root path
 	 * @param string $phpEx           Variable will be filled with phpExt
 	 */
-	public function __construct(&$phpbb_root_path, &$phpEx)
+	public function __construct()
 	{
+		define('IN_PHPBB', true);
+		
 		// Set the vars
 		// @todo for now hardcoded
-		define('IN_PHPBB', true);
-		if (!defined('PHPBB_ROOT_PATH')) define('PHPBB_ROOT_PATH', './../');
-		if (!defined('PHP_EXT')) define('PHP_EXT', 'php');
-
-		$phpbb_root_path = PHPBB_ROOT_PATH;
-		$phpEx = PHP_EXT;
+		$this->phpbb_root_path = (!defined('PHPBB_ROOT_PATH')) ? './../' : PHPBB_ROOT_PATH;
+		$this->phpEx = 'php';
 	}
 
 	public function setup(\auth $auth, \acm $cache, array $config, \dbal $db, \template $template, \session $user)
