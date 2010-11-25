@@ -47,8 +47,14 @@ class Kernal
 		include(__DIR__ . '/../../team_config.php');
 		$this->config = $config;
 
+		// Set the phpBB root paths
+		define('PHPBB_ROOT_PATH', $this->config['phpbb_root_path']);
+		define('PHP_EXT', 'php');
+	}
+
+	public function setup()
+	{
 		// Setup the URL handler
-		// @todo hardcoded for the time being
 		$this->url->root_url = generate_board_url(true) . "/{$this->config['script_path']}/";
 		$this->url->decode_url("{$this->config['script_path']}/");
 	}

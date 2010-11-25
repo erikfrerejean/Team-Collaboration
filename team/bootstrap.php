@@ -19,13 +19,22 @@ $loader->register();
 // Init URL handler
 $url = new kernal\URL();
 
+// The Team Collaboration kernal
+$kernal = new kernal\Kernal($url);
+
 // A wrapper for phpBB
-$phpbb_root_path = $phpEx = '';
-$phpbb = new kernal\phpBB($phpbb_root_path, $phpEx);
+$phpbb = new kernal\phpBB();
+
+// Make the paths compatible
+$phpbb_root_path = PHPBB_ROOT_PATH;
+$phpEx = PHP_EXT;
 
 // Load and initialse phpBB
 require PHPBB_ROOT_PATH . 'common.' . PHP_EXT;
 $phpbb->setup($auth, $cache, $config, $db, $template, $user);
 
-// The Team Collaboration kernal
-$kernal = new kernal\Kernal($phpbb, $url);
+// Inject phpBB wrapper
+$kernal->set_phpbb($phpbb);
+
+// Setup the kernal
+$kernal->setup();
