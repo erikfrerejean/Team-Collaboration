@@ -1,0 +1,18 @@
+<?xml version="1.0" ?>
+ 
+<container xmlns="http://symfony-project.org/2.0/container">
+	<parameters>
+		<parameter key="kernal.class">teamcollaboration\kernal\Kernal</parameter>
+		<parameter key="kernal.options" type="collection">
+			<parameter>phpbb</parameter>
+			<parameter>url</parameter>
+		</parameter>
+	</parameters>
+
+	<services>
+		<service id="kernal" class="%kernal.class%">
+			<argument type="service" id="phpbb" />
+			<argument type="service" id="url" />
+		</service>
+	</services>
+</container>

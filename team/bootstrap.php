@@ -10,3 +10,12 @@
 /**
  */
 namespace teamcollaboration;
+
+// The Team Collaboration Auto Loader
+require __DIR__ . '/includes/ClassLoader.php';
+$loader = new ClassLoader(__DIR__ . '/includes/');
+$loader->register();
+
+// Load the DI helper
+$di = new helpers\DIHelper('TeamServiceContainer', 'teamServiceContainer');
+$di->loadDI();

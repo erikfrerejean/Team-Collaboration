@@ -1,0 +1,12 @@
+<?xml version="1.0" ?>
+ 
+<container xmlns="http://symfony-project.org/2.0/container">
+	<parameters>
+		<parameter key="phpbb.class">teamcollaboration\kernal\phpBB</parameter>
+	</parameters>
+
+	<services>
+		<service id="phpbb" class="%phpbb.class%">
+		</service>
+	</services>
+</container>
