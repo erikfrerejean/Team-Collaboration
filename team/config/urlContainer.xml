@@ -1,0 +1,12 @@
+<?xml version="1.0" ?>
+ 
+<container xmlns="http://symfony-project.org/2.0/container">
+	<parameters>
+		<parameter key="url.class">teamcollaboration\kernal\URL</parameter>
+	</parameters>
+
+	<services>
+		<service id="url" class="%url.class%">
+		</service>
+	</services>
+</container>
