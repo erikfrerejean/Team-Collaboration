@@ -92,24 +92,3 @@ class DIHelper
 		return null;
 	}
 }
-
-/*
-// Load the DI controller, the build php file is stored in the system tmp dir
-$di_file = sys_get_temp_dir() . 'teamDIServiceContainer.php';
-if (file_exists($di_file))
-{
-	require $di_file;
-	$di = new \TeamServiceContainer();
-}
-else
-{
-	// Generate from the .xml
-	$di = new \sfServiceContainerBuilder();
-	$di_loader = new \sfServiceContainerLoaderFileXml($di);
-	$di_loader->load(__DIR__ . '/config/teamServiceContainer.xml');
-
-	// Write the php file
-	$dumper = new \sfServiceContainerDumperPhp($di);
-	file_put_contents($di_file, $dumper->dump(array('class' => 'TeamServiceContainer')));
-}
-*/
