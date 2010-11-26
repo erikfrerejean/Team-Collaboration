@@ -62,7 +62,7 @@ class DIHelper
 		if (file_exists($this->di_file))
 		{
 			require $this->di_file;
-			$this->di = new \TeamServiceContainer();
+			$this->di = new TeamServiceContainer();
 		}
 		else
 		{
@@ -72,8 +72,14 @@ class DIHelper
 			$di_loader->load(__DIR__ . '/../../config/' . $this->di_xml);
 
 			// Write the php file
-			$dumper = new \sfServiceContainerDumperPhp($this->di);
-			file_put_contents($this->di_file, $dumper->dump(array('class' => 'TeamServiceContainer')));
+			$dumper	= new \sfServiceContainerDumperPhp($this->di);
+			$dumped	= $dumper->dump(array('class' => $this->di_class));
+
+			// Add our namespace
+			$dumped	= substr_replace($dumped, "\nnamespace teamcollaboration\helpers;\nuse \\sfServiceContainer;\n", 6, 0);
+
+			// Store
+			file_put_contents($this->di_file, $dumped);
 		}
 	}
 

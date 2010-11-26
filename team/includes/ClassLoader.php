@@ -83,6 +83,12 @@ class ClassLoader
 
 		$path = $this->root_path . str_replace('\\', DIRECTORY_SEPARATOR, $cl) . '.php';
 
+		// Must be included manually
+		if (!file_exists($path))
+		{
+			return;
+		}
+
 		require $path;
 	}
 }
