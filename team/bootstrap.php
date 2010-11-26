@@ -11,10 +11,6 @@
  */
 namespace teamcollaboration;
 
-// Register the DI Auto loader
-require __DIR__ . '/includes/vendor/di/lib/sfServiceContainerAutoloader.php';
-\sfServiceContainerAutoloader::register();
-
 // The Team Collaboration Auto Loader
 require __DIR__ . '/includes/ClassLoader.php';
 $loader = new ClassLoader();

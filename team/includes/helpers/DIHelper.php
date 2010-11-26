@@ -45,6 +45,13 @@ class DIHelper
 		$this->di_class	= $classname;
 		$this->di_file	= sys_get_temp_dir() . $filename . ((substr($filename, -4) == '.php') ? '' : '.php');
 		$this->di_xml	= (substr($di_xml, -4) == '.xml') ? $di_xml : $di_xml . '.xml';
+
+		// Register the DI Auto loader
+		if (!class_exists('sfServiceContainerAutoloader'))
+		{
+			require __DIR__ . '/../vendor/di/lib/sfServiceContainerAutoloader.php';
+			\sfServiceContainerAutoloader::register();
+		}
 	}
 
 	/**
