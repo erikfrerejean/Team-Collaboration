@@ -17,7 +17,7 @@ $loader = new ClassLoader();
 $loader->register();
 
 // Load the DI helper
-$di = new helpers\DIHelper('TeamServiceContainer', md5('teamServiceContainer'), 'teamServiceContainer');
+$di = new helpers\DIHelper('TeamServiceContainer', 'teamServiceContainer');
 $di->loadDI();
 
 // Setup phpBB

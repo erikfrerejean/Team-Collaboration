@@ -40,11 +40,11 @@ class DIHelper
 	/**
 	 * Setup the helper
 	 */
-	public function __construct($classname, $filename, $di_xml)
+	public function __construct($classname, $di_xml)
 	{
 		$this->di_class	= $classname;
-		$this->di_file	= sys_get_temp_dir() . $filename . ((substr($filename, -4) == '.php') ? '' : '.php');
-		$this->di_xml	= (substr($di_xml, -4) == '.xml') ? $di_xml : $di_xml . '.xml';
+		$this->di_xml	= __DIR__ . '/../../config/' . $this->di_xml . ((substr($di_xml, -4) == '.xml') ? $di_xml : $di_xml . '.xml');
+		$this->di_file	= sys_get_temp_dir() . sha1_file($this->di_xml) . '.php';
 
 		// Register the DI Auto loader
 		if (!class_exists('sfServiceContainerAutoloader'))
@@ -69,7 +69,7 @@ class DIHelper
 			// Generate from the .xml
 			$this->di = new \sfServiceContainerBuilder();
 			$di_loader = new \sfServiceContainerLoaderFileXml($this->di);
-			$di_loader->load(__DIR__ . '/../../config/' . $this->di_xml);
+			$di_loader->load($this->di_xml);
 
 			// Write the php file
 			$dumper	= new \sfServiceContainerDumperPhp($this->di);
