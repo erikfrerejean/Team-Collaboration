@@ -29,7 +29,6 @@ namespace teamcollaboration;
  */
 class ClassLoader
 {
-	private $cached_paths = array();
 	private $root_path = '';
 
 	/**
@@ -76,6 +75,11 @@ class ClassLoader
 		}
 
 		$path = $this->root_path . str_replace('\\', DIRECTORY_SEPARATOR, $cl) . '.php';
+
+		if (!file_exists($path))
+		{
+			return;
+		}
 
 		require $path;
 	}

@@ -1,0 +1,3 @@
+[submodule "team/includes/vendor/di"]
+	path = team/includes/vendor/di
+	url = https://github.com/fabpot/dependency-injection.git
