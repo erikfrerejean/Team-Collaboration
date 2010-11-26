@@ -15,39 +15,17 @@ namespace teamcollaboration;
 require __DIR__ . '/includes/vendor/di/lib/sfServiceContainerAutoloader.php';
 \sfServiceContainerAutoloader::register();
 
-// The auto loader
+// The Team Collaboration Auto Loader
 require __DIR__ . '/includes/ClassLoader.php';
-$loader = new ClassLoader(__DIR__ . '/includes/', null, 'tc_');
+$loader = new ClassLoader();
 $loader->register();
 
-// Init the DI container
-$di = new \sfServiceContainerBuilder(array(
-	// The TC Kernal
-	'kernal.class'		=> 'teamcollaboration\kernal\Kernal',
-	'kernal.options'	=> array('phpbb', 'url'),
-
-	// The URL handler
-	'url.class'			=> 'teamcollaboration\kernal\URL',
-
-	// The phpBB wrapper
-	'phpbb.class'		=> 'teamcollaboration\kernal\phpBB',
-));
-
-// Register phpBB
-$di->register('phpbb', '%phpbb.class%');
-
-// A small hack to make sure that phpBB understand our paths
-$phpbb_root_path = $di->phpbb->phpbb_root_path;
-$phpEx = $di->phpbb->phpEx;
+// Load the DI helper
+$di = new helpers\DIHelper('TeamServiceContainer', md5('teamServiceContainer'), 'teamServiceContainer');
+$di->loadDI();
 
 // Setup phpBB
-require $phpbb_root_path . 'common.' . $phpEx;
+$phpbb_root_path = $di->phpbb->phpbb_root_path;
+$phpEx = $di->phpbb->phpEx;
+require PHPBB_ROOT_PATH . 'common.php';
 $di->phpbb->setup($auth, $cache, $config, $db, $template, $user);
-
-// Register the URL handler
-$di->register('url', '%url.class%');
-
-// Register the kernal
-$di->register('kernal', '%kernal.class%')->
-	addArgument(new \sfServiceReference('phpbb'))->
-	addArgument(new \sfServiceReference('url'));

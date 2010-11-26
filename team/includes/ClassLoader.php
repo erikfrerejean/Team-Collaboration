@@ -35,11 +35,18 @@ class ClassLoader
 	 * Creates a new phpbb_class_loader, which loads files with the given
 	 * file extension from the given phpbb root path.
 	 *
-	 * @param string $phpbb_root_path phpBB's root directory containing includes/
+	 * @param string $root_path The directory from where shall be included
 	 */
-	public function __construct($root_path)
+	public function __construct($root_path = '')
 	{
-		$this->root_path = (substr($root_path, -1) === '/') ? $root_path : $root_path . '/';
+		if (empty($root_path))
+		{
+			$this->root_path = __DIR__ . '/';
+		}
+		else
+		{
+			$this->root_path = (substr($root_path, -1) === '/') ? $root_path : $root_path . '/';
+		}
 	}
 
 	/**
